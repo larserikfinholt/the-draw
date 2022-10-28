@@ -1,16 +1,28 @@
 import { ref } from "vue";
-import {
-  States,
-} from "./types";
+import { loadAthletes } from "./athletesLoader";
+import { IAthlete } from "./types";
+
 
 
 
 export class Manager {
 
+  public athletes:Array<IAthlete> =  [];
+  public females:Array<IAthlete> =  [];
 
   constructor() {
     console.log("Creating manager");
-    const athletes = loadAthletes();
+  
   }
+
+  public start() {
+    this.athletes = loadAthletes();
+  }
+
+
+  public draw() {
+    this.females.push(this.athletes.find(x=>x.gender=="F"));
+  }
+
 
 }

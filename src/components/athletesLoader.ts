@@ -1,18 +1,16 @@
-import { MainProcesses, type IStep } from "./types";
+import { IAthlete } from "./types";
 import csv from "./athletes.csv";
 
-export const loadAthletes = (): Array<IStep> => {
-  return csv.map((x) :IStep => {
+ 
+
+export const loadAthletes = (): Array<IAthlete> => {
+  return csv.map((x) :IAthlete => {
     return {
-      id: parseInt(x.id),
-      duration: parseInt(x.duration),
-      frequency:0,
-      mainProcess:x.mainProcess,
-      order:x.order,
-      step:x.step
+      id: parseInt(x.Id),
+      country: x.Country,
+      gender: x.Gender
     };
   });
 };
 
-const all = loadGenericProcesses();
 
