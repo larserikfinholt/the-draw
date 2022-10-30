@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { loadAthletes } from "./athletesLoader";
 import  { Gender, type IAthlete } from "./types";
 
-const TOTAL_SLOTS = 215;
+export const TOTAL_SLOTS = 215;
 const FEMALE_COUNT = Math.ceil(TOTAL_SLOTS*15/100);
 const MAX_MALE_COUNT = TOTAL_SLOTS-FEMALE_COUNT;
 const MAX_NORWEGIAN_COUNT = Math.floor(TOTAL_SLOTS* 30/100);
@@ -28,6 +28,7 @@ export class Manager {
   public athletes:Array<IAthlete> =  [];
   public lucky:Array<IAthlete> =  [];
 
+  public slots:number = TOTAL_SLOTS;
   
 
   public get grouping() {
@@ -41,13 +42,15 @@ export class Manager {
     return this.lucky.filter(x=>x.gender==Gender.Male);
   }
 
+  
+
   constructor() {
     console.log("Creating manager");
   }
 
+  public femaleDone:boolean = false;
+
   public startLoop(){
-
-
 
     setTimeout(()=>{
       let gender = Gender.Male;
@@ -57,7 +60,11 @@ export class Manager {
 
 
       this.draw(gender);
-      this.startLoop();
+      if (this.luckyFemales.length == FEMALE_COUNT && this.luckyMales.length==0){
+        this.femaleDone = true;
+      } else {
+        this.startLoop();
+      }
     },100);
   }
 
@@ -95,6 +102,13 @@ export class Manager {
 
     // lucky one
     return true;
+  }
+
+  public luckyAsCsv(){
+    return this.lucky.map(row =>
+
+      `${row.id}, ${row.country}, ${row.gender}`
+    ).join('\r\n');  // rows starting on new lines
   }
 
 
