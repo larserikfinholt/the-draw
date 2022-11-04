@@ -102,7 +102,7 @@ const asPercent = (count: number) => {
   line-height: 50%;
 }
 .lucky {
-  font-size: 8px;
+  font-size: 11px;
   display: inline-block;
 }
 .heading {

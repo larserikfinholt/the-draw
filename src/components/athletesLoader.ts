@@ -1,14 +1,15 @@
 import { Gender, IAthlete } from "./types";
-import csv from "./athletes.csv";
+import csv from "./norseman_ballot.csv";
 
+console.log(csv);
  
 
 export const loadAthletes = (): Array<IAthlete> => {
   return csv.map((x) :IAthlete => {
     return {
-      id: parseInt(x.Id),
-      country: x.Country,
-      gender: x.Gender=="F"?Gender.Female:Gender.Male
+      id: x.Ticketnumber,
+      country: x.Nationality,
+      gender: x.Gender=="Female"?Gender.Female:Gender.Male
     };
   });
 };

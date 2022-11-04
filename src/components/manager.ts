@@ -70,6 +70,7 @@ export class Manager {
 
   public start() {
     this.athletes = loadAthletes();
+    console.log(this.athletes[0]);
   }
   public draw(gender:Gender|null) :boolean {
     let array = this.athletes;
