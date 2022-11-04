@@ -1,4 +1,4 @@
-Ticketnumber,Gender,Nationality
+Ticket number,Gender,Nationality
 1,Male,Belgium
 2,Male,Norway
 3,Male,Norway
@@ -9994,8 +9994,3 @@ Ticketnumber,Gender,Nationality
 9993,Male,Argentina
 9994,Male,China
 9995,Male,Taiwan
-9996,Male,Poland
-9997,Male,Serbia
-9998,Male,Irland
-9999,Male,Belgium
-10000,Female,Argentina

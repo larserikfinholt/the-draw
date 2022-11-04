@@ -99,10 +99,10 @@ const asPercent = (count: number) => {
   flex-direction: row;
 }
 .t-small {
-  line-height: 50%;
+  line-height: 80%;
 }
 .lucky {
-  font-size: 11px;
+  font-size: 12px;
   display: inline-block;
 }
 .heading {
