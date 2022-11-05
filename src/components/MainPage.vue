@@ -48,20 +48,10 @@ const asPercent = (count: number) => {
       Load athletes
     </button>
     <button
-      :disabled="manager.femaleDone || manager.athletes.length == 0"
-      @click="drawGirls()"
+      :disabled="manager.athletes.length == 0"
+      @click="drawAll()"
     >
-      Draw Girls
-    </button>
-    <button
-      :disabled="
-        !manager.femaleDone ||
-        manager.athletes.length == 0 ||
-        manager.lucky.length > 33
-      "
-      @click="drawBoys()"
-    >
-      Draw Boys
+      Do the draw
     </button>
     <button :disabled="manager.lucky.length < 100" @click="exportData()">
       Export
