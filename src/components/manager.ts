@@ -52,7 +52,7 @@ export class Manager {
       if (this.lucky.length<TOTAL_SLOTS) {
          this.startLoop();
       }
-    }, 100);
+    }, 400);
   }
 
   public start() {
