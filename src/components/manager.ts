@@ -48,6 +48,7 @@ export class Manager {
       if (this.luckyMales.length >= MAX_MALE_COUNT) {
         gender = Gender.Female;
       }
+      // Do the draw!
       this.draw(gender);
       if (this.lucky.length<TOTAL_SLOTS) {
          this.startLoop();
@@ -82,7 +83,7 @@ export class Manager {
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
     if (randomAthlete.country == "Norway") {
-      // Max 30% from Norwat
+      // Max 30% from Norway
       if (
         this.lucky.filter((x) => x.country == "Norway").length >=
         MAX_NORWEGIAN_COUNT
