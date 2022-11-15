@@ -2,6 +2,7 @@
 
 Small app to do the draw according to the rules defined by nxtri.
 
+![image](https://user-images.githubusercontent.com/1328417/201855087-2a3698bd-88d3-4430-8591-2cbee740e3b4.png)
 
 
 ### Getting started
