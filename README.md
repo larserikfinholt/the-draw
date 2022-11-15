@@ -1,6 +1,24 @@
 # the-draw
 
-Small app to do the draw according to the rules defined by nxtri
+Small app to do the draw according to the rules defined by nxtri.
+
+
+
+## Getting started
+To run it locally you need to install nodejs (nodejs.org), and download this code (the-draw repo) and run `npm install`. 
+
+# Adding the ticket numbers
+The code uses the file `/src/components/Norseman_ballot.csv` as source. To add your owm ticket numbers replace this file. (Use a standard excel file, and save it as CSV). Be careful to use the exact same format.
+
+# Running the app
+To run the app: `npm run dev` - this will start the app locally, load the file above, and do the draw. You may export the results.
+
+# Modifiing the rules
+All rules are implemented in `src/components/manager.ts` - this should be self explainable - just modify for your need.
+
+Good luck!
+
+
 
 ## Recommended IDE Setup
 
