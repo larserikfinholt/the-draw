@@ -6,10 +6,10 @@ import { ar } from "date-fns/locale";
 export const TOTAL_SLOTS = 125;
 const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
 const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
-const MAX_NORWEGIAN_COUNT = Math.floor((TOTAL_SLOTS * 30) / 100);
-const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 10) / 100);
-const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 100;
-const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = Math.ceil((MAX_COUNTRY_COUNT * 15) / 100);
+const MAX_NORWEGIAN_COUNT =  Math.floor((TOTAL_SLOTS * 30) / 100);
+const MAX_COUNTRY_COUNT = 10000;// Math.floor((TOTAL_SLOTS * 15) / 100);
+const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 500;
+const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = Math.ceil((MAX_COUNTRY_COUNT * 10) / 100);
 
 function groupBy(arr, criteria) {
   const newObj = arr.reduce(function (acc, currentValue) {
@@ -106,9 +106,9 @@ export class Manager {
       return true;
     }
 
-    if (randomAthlete.country == "Norway") {
+    if (randomAthlete.country == "Norwegian") {
       // Max 30% from Norway
-      if (this.lucky.filter((x) => x.country == "Norway").length >= MAX_NORWEGIAN_COUNT) {
+      if (this.lucky.filter((x) => x.country == "Norwegian").length >= MAX_NORWEGIAN_COUNT) {
         return false;
       }
     } else if (this.lucky.filter((x) => x.country == randomAthlete.country).length >= MAX_COUNTRY_COUNT) {

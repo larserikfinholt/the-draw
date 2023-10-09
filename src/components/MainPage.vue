@@ -61,12 +61,12 @@ const asBoysVsGirsl = (country: string) => {
       Export
     </button>
     <div style="display: flex;" class="t-data">
-      <div style="flex:70%" class="t-small">
+      <div style="flex:60%" class="t-small">
         <p class="lucky" v-for="(l, i) in manager.lucky" :key="i">
           {{ l.id }}{{ l.country }}{{ l.gender }},
         </p>
       </div>
-      <div style="flex:30%">
+      <div style="flex:40%">
         <div class="heading">Total Lucky: {{ manager.lucky.length }}</div>
         <div>
           Girls: {{ manager.luckyFemales.length }} ({{
