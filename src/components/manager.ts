@@ -47,16 +47,34 @@ export class Manager {
 
   public femaleDone: boolean = false;
 
+  private attemptCounter = 0;
+  private maxAttempts = 10000; // Prevent infinite loops
+
   public startLoop(delay: number = 400) {
     setTimeout(() => {
       let gender = null;
       if (this.luckyMales.length >= MAX_MALE_COUNT) {
         gender = Gender.Female;
       }
+      
       // Do the draw!
-      this.draw(gender, this.forceFemaleFromThisCOuntry);
-      if (this.lucky.length < TOTAL_SLOTS) {
+      const success = this.draw(gender, this.forceFemaleFromThisCOuntry);
+      
+      if (!success) {
+        this.attemptCounter++;
+        if (this.attemptCounter > this.maxAttempts) {
+          console.error("Maximum attempts reached, stopping draw to prevent infinite loop");
+          console.log("Final results:", this.lucky.length, "out of", TOTAL_SLOTS);
+          return;
+        }
+      } else {
+        this.attemptCounter = 0; // Reset counter on successful draw
+      }
+      
+      if (this.lucky.length < TOTAL_SLOTS && this.athletes.length > 0) {
         this.startLoop(delay);
+      } else if (this.athletes.length === 0) {
+        console.log("No more athletes available, draw complete with", this.lucky.length, "participants");
       }
     }, delay); // Wait time to build up some excitement while we wait for the results
   }
@@ -80,12 +98,24 @@ export class Manager {
     // Special case to ensure countries with many participants gets females
     if (forceGirlFromCountry != null) {
       array = this.athletes.filter((x) => x.country == forceGirlFromCountry && x.gender == Gender.Female);
+      // Safety check: if no females available from this country, abandon the force rule
+      if (array.length === 0) {
+        console.warn("No females available from forced country, abandoning rule:", forceGirlFromCountry);
+        this.forceFemaleFromThisCOuntry = null;
+        return false;
+      }
     } else {
       // In case the overall gender is not fullfilled, limit to this gender
       if (gender != null) {
         array = this.athletes.filter((x) => x.gender == gender);
       }
     }
+    
+    // Safety check: if no athletes available in filtered array, return false
+    if (array.length === 0) {
+      return false;
+    }
+    
     // Pick random athlete
     const randomAthlete = array[Math.floor(Math.random() * array.length)];
 
