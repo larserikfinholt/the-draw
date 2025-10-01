@@ -39,6 +39,10 @@ const downloadBlob = (content, filename, contentType) => {
 const asPercent = (count: number) => {
   return `${((count * 100) / manager.value.lucky.length).toFixed(2)}%`;
 };
+const asBoysVsGirsl = (country: string) => {
+  const fromCountry = manager.value.lucky.filter(x=>x.country==country);
+  return `${fromCountry.filter(x=>x.gender==Gender.Male).length}/${fromCountry.filter(x=>x.gender==Gender.Female).length}`;
+};
 </script>
 
 <template>
@@ -57,12 +61,12 @@ const asPercent = (count: number) => {
       Export
     </button>
     <div style="display: flex;" class="t-data">
-      <div style="flex:70%" class="t-small">
+      <div style="flex:60%" class="t-small">
         <p class="lucky" v-for="(l, i) in manager.lucky" :key="i">
           {{ l.id }}{{ l.country }}{{ l.gender }},
         </p>
       </div>
-      <div style="flex:30%">
+      <div style="flex:40%">
         <div class="heading">Total Lucky: {{ manager.lucky.length }}</div>
         <div>
           Girls: {{ manager.luckyFemales.length }} ({{
@@ -76,7 +80,10 @@ const asPercent = (count: number) => {
         </div>
         <div class="heading">Country distribution</div>
         <div v-for="(value, key) in manager.grouping" :key="key">
-          {{ key }}: {{ value.length }} ({{ asPercent(value.length) }})
+          {{ key }}: {{ value.length }} ({{asBoysVsGirsl(key)}}) ({{ asPercent(value.length) }} )
+        </div>
+        <div>
+          <span v-if="manager.forceFemaleFromThisCOuntry">Looking for girl from {{ manager.forceFemaleFromThisCOuntry }}</span>
         </div>
       </div>
     </div>

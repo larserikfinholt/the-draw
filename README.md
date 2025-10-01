@@ -14,8 +14,33 @@ The code uses the file `/src/components/Norseman_ballot.csv` as source. To add y
 ### Running the app
 To run the app: `npm run dev` - this will start the app locally, load the file above, and do the draw. You may export the results.
 
-### Modifiing the rules
-All rules are implemented in `src/components/manager.ts` - this should be self explainable - just modify for your need.
+### The Draw Rules
+The draw follows these specific rules implemented in `src/components/manager.ts`:
+
+**Basic Configuration:**
+- **Total slots**: 125 participants
+- **Minimum female participants**: 17% (22 slots minimum)
+- **Maximum male participants**: 83% (103 slots maximum)
+
+**Country-based Rules:**
+- **Norwegian participants**: Maximum 25% (31 slots)
+- **Other countries**: Currently no limit per country (set to 10000)
+
+**Special Rules for Large Countries:**
+- Countries with more than 500 ticket holders get additional female representation requirements
+- Such countries must have at least 10% females among their selected participants
+
+**How it works:**
+1. The system randomly selects athletes while respecting all the above quotas
+2. If male quota is filled, only females can be selected
+3. For countries with >500 participants, the system enforces female representation by temporarily forcing female selection when needed
+
+To modify these rules, edit the constants at the top of `src/components/manager.ts`:
+- `TOTAL_SLOTS`: Total number of slots
+- `FEMALE_COUNT`: Minimum female percentage  
+- `MAX_NORWEGIAN_COUNT`: Maximum slots for Norwegian participants
+- `MAX_COUNTRY_COUNT`: Maximum slots per country (other than Norway)
+- `THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_`: Threshold for applying special female rules
 
 Good luck!
 
