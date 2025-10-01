@@ -60,6 +60,17 @@ const asBoysVsGirsl = (country: string) => {
   const fromCountry = manager.value.lucky.filter(x=>x.country==country);
   return `${fromCountry.filter(x=>x.gender==Gender.Male).length}/${fromCountry.filter(x=>x.gender==Gender.Female).length}`;
 };
+
+const sortedCountries = computed(() => {
+  const grouping = manager.value.grouping;
+  const entries = Object.keys(grouping).map(key => [key, grouping[key]] as [string, any[]]);
+  return entries
+    .sort(([, a], [, b]) => b.length - a.length) // Sort by count descending
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, any[]>);
+});
 </script>
 
 <template>
@@ -96,7 +107,7 @@ const asBoysVsGirsl = (country: string) => {
           }})
         </div>
         <div class="heading">Country distribution</div>
-        <div v-for="(value, key) in manager.grouping" :key="key">
+        <div v-for="(value, key) in sortedCountries" :key="key">
           {{ key }}: {{ value.length }} ({{asBoysVsGirsl(String(key))}}) ({{ asPercent(value.length) }} )
         </div>
         <div>
@@ -177,9 +188,9 @@ body {
 /* Dark mode for checkbox */
 @media (prefers-color-scheme: dark) {
   .skip-delay-label {
-    /* background-color: rgba(45, 45, 45, 0.95);
-    color: #ffffff; */
-    /* border: 1px solid rgba(255, 255, 255, 0.2); */
+    background-color: rgba(45, 45, 45, 0.95);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .skip-delay-label:hover {
