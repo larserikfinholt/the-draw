@@ -1,19 +1,35 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Manager } from "./manager";
 import { Gender } from "./types";
 
 const manager = ref(new Manager());
+const skipDelay = ref(true); // Default is checked (skip delay)
+
+// Load skipDelay state from localStorage on mount
+onMounted(() => {
+  const saved = localStorage.getItem('skipDelay');
+  if (saved !== null) {
+    skipDelay.value = JSON.parse(saved);
+  }
+});
+
+// Save skipDelay state to localStorage when changed
+const updateSkipDelay = () => {
+  localStorage.setItem('skipDelay', JSON.stringify(skipDelay.value));
+};
 
 const start = () => {
   manager.value.start();
 };
 const drawAll = () => {
-  manager.value.startLoop();
+  const delay = skipDelay.value ? 5 : 400;
+  manager.value.startLoop(delay);
 };
 const drawGirls = () => {
-  manager.value.startLoop();
+  const delay = skipDelay.value ? 5 : 400;
+  manager.value.startLoop(delay);
 };
 const exportData = () => {
   const csv = manager.value.luckyAsCsv();
@@ -21,10 +37,11 @@ const exportData = () => {
 };
 
 const drawBoys = () => {
-  manager.value.startLoop();
+  const delay = skipDelay.value ? 5 : 400;
+  manager.value.startLoop(delay);
 };
 
-const downloadBlob = (content, filename, contentType) => {
+const downloadBlob = (content: string, filename: string, contentType: string) => {
   // Create a blob
   var blob = new Blob([content], { type: contentType });
   var url = URL.createObjectURL(blob);
@@ -43,6 +60,17 @@ const asBoysVsGirsl = (country: string) => {
   const fromCountry = manager.value.lucky.filter(x=>x.country==country);
   return `${fromCountry.filter(x=>x.gender==Gender.Male).length}/${fromCountry.filter(x=>x.gender==Gender.Female).length}`;
 };
+
+const sortedCountries = computed(() => {
+  const grouping = manager.value.grouping;
+  const entries = Object.keys(grouping).map(key => [key, grouping[key]] as [string, any[]]);
+  return entries
+    .sort(([, a], [, b]) => b.length - a.length) // Sort by count descending
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, any[]>);
+});
 </script>
 
 <template>
@@ -79,13 +107,23 @@ const asBoysVsGirsl = (country: string) => {
           }})
         </div>
         <div class="heading">Country distribution</div>
-        <div v-for="(value, key) in manager.grouping" :key="key">
-          {{ key }}: {{ value.length }} ({{asBoysVsGirsl(key)}}) ({{ asPercent(value.length) }} )
+        <div v-for="(value, key) in sortedCountries" :key="key">
+          {{ key }}: {{ value.length }} ({{asBoysVsGirsl(String(key))}}) ({{ asPercent(value.length) }} )
         </div>
         <div>
           <span v-if="manager.forceFemaleFromThisCOuntry">Looking for girl from {{ manager.forceFemaleFromThisCOuntry }}</span>
         </div>
       </div>
+    </div>
+    <div class="skip-delay-container">
+      <label class="skip-delay-label">
+        <input 
+          type="checkbox" 
+          v-model="skipDelay" 
+          @change="updateSkipDelay"
+        />
+        Skip delay
+      </label>
     </div>
   </div>
 </template>
@@ -109,6 +147,61 @@ const asBoysVsGirsl = (country: string) => {
 
 body {
   background-color: #eee;
-    color: #000;
+  color: #000;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+}
+
+.skip-delay-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.skip-delay-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  /* background-color: rgba(255, 255, 255, 0.95);*/
+  color: #333; 
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+  transition: all 0.2s ease;
+}
+
+.skip-delay-label:hover {
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode for checkbox */
+@media (prefers-color-scheme: dark) {
+  .skip-delay-label {
+    background-color: rgba(45, 45, 45, 0.95);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .skip-delay-label:hover {
+    background-color: rgba(55, 55, 55, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.skip-delay-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
 }
 </style>

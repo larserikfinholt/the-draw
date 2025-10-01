@@ -14,6 +14,15 @@ The code uses the file `/src/components/Norseman_ballot.csv` as source. To add y
 ### Running the app
 To run the app: `npm run dev` - this will start the app locally, load the file above, and do the draw. You may export the results.
 
+### Features
+
+**Skip Delay Checkbox**
+- Located in the lower left corner of the interface
+- **Checked (default)**: Fast drawing with 5ms delay between selections
+- **Unchecked**: Original timing with 400ms delay for dramatic effect
+- Setting is automatically saved and remembered between sessions using localStorage
+- Useful for quick testing or when you want the excitement of watching each selection unfold
+
 ### The Draw Rules
 The draw follows these specific rules implemented in `src/components/manager.ts`:
 
