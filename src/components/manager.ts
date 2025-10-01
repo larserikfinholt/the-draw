@@ -47,7 +47,7 @@ export class Manager {
 
   public femaleDone: boolean = false;
 
-  public startLoop() {
+  public startLoop(delay: number = 400) {
     setTimeout(() => {
       let gender = null;
       if (this.luckyMales.length >= MAX_MALE_COUNT) {
@@ -56,9 +56,9 @@ export class Manager {
       // Do the draw!
       this.draw(gender, this.forceFemaleFromThisCOuntry);
       if (this.lucky.length < TOTAL_SLOTS) {
-        this.startLoop();
+        this.startLoop(delay);
       }
-    }, 400); // Wait time to build up some exitement while we wait for the results
+    }, delay); // Wait time to build up some excitement while we wait for the results
   }
 
   public start() {
