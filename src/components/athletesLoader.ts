@@ -1,5 +1,5 @@
 import { Gender, IAthlete } from "./types";
-import csv from "./norseman_ballot.csv";
+import csv from "./Norseman_ballot.csv";
 
 console.log(csv);
  

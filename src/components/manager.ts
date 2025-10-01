@@ -5,7 +5,7 @@ import { Gender, type IAthlete } from "./types";
 export const TOTAL_SLOTS = 215;
 const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
 const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
-const MAX_NORWEGIAN_COUNT = Math.floor((TOTAL_SLOTS * 30) / 100);
+const MAX_NORWEGIAN_COUNT = Math.floor((TOTAL_SLOTS * 25) / 100);
 const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 10) / 100);
 
 function groupBy(arr, criteria) {
@@ -83,7 +83,7 @@ export class Manager {
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
     if (randomAthlete.country == "Norway") {
-      // Max 30% from Norway
+      // Max 25% from Norway
       if (
         this.lucky.filter((x) => x.country == "Norway").length >=
         MAX_NORWEGIAN_COUNT
