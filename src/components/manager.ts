@@ -58,7 +58,7 @@ export class Manager {
       if (this.lucky.length < TOTAL_SLOTS) {
         this.startLoop();
       }
-    }, 400);
+    }, 400); // Wait time to build up some exitement while we wait for the results
   }
 
   public start() {
