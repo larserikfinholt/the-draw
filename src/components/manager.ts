@@ -4,12 +4,12 @@ import { Gender, type IAthlete } from "./types";
 import { ar } from "date-fns/locale";
 
 export const TOTAL_SLOTS = 125;
-const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 17) / 100);
+const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
 const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
 const MAX_NORWEGIAN_COUNT =  Math.floor((TOTAL_SLOTS * 25) / 100);
-const MAX_COUNTRY_COUNT = 10000;// Math.floor((TOTAL_SLOTS * 15) / 100);
-const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 500;
-const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = Math.ceil((MAX_COUNTRY_COUNT * 10) / 100);
+const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 15) / 100); // 18 slots max per country (15% of 125)
+const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 100; // Lower threshold - countries with >100 participants get special female rules
+const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = 2; // Minimum 2 females from large countries
 
 function groupBy(arr, criteria) {
   const newObj = arr.reduce(function (acc, currentValue) {
@@ -100,15 +100,10 @@ export class Manager {
     return false;
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
-    // We already have draw an athlete from this country, but the female quota is not fullfilled
-    if (this.forceFemaleFromThisCOuntry == randomAthlete.country && randomAthlete.gender == Gender.Female) {
-      this.forceFemaleFromThisCOuntry = null;
-      return true;
-    }
-
-    if (randomAthlete.country == "Norwegian") {
+    // Check Norwegian quota first - this applies to all Norwegian athletes regardless of other rules
+    if (randomAthlete.country == "Norway") {
       // Max 25% from Norway
-      if (this.lucky.filter((x) => x.country == "Norwegian").length >= MAX_NORWEGIAN_COUNT) {
+      if (this.lucky.filter((x) => x.country == "Norway").length >= MAX_NORWEGIAN_COUNT) {
         return false;
       }
     } else if (this.lucky.filter((x) => x.country == randomAthlete.country).length >= MAX_COUNTRY_COUNT) {
@@ -116,17 +111,23 @@ export class Manager {
       return false;
     }
 
+    // We already have draw an athlete from this country, but the female quota is not fullfilled
+    if (this.forceFemaleFromThisCOuntry == randomAthlete.country && randomAthlete.gender == Gender.Female) {
+      this.forceFemaleFromThisCOuntry = null;
+      return true;
+    }
+
     if (randomAthlete.gender == Gender.Male && this.luckyMales.length >= MAX_MALE_COUNT) {
       // Min 17% girls
       return false;
     }
 
-    // In case the country quota is almost full, and the country has many participants, ensure we get females from that country
+    // In case we're selecting from a large country, ensure we get a minimum number of females
     if (
       randomAthlete.gender == Gender.Male &&
-      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MAX_COUNTRY_COUNT - MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
       this.countriesWithMoreThanThresholdParticipants.includes(randomAthlete.country) &&
-      this.luckyFemales.filter((x) => x.country == randomAthlete.country).length < MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD
+      this.luckyFemales.filter((x) => x.country == randomAthlete.country).length < MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
+      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD
     ) {
       console.log(
         "To few females from country, forcing a female from this country",
