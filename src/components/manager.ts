@@ -4,7 +4,7 @@ import { Gender, type IAthlete } from "./types";
 import { ar } from "date-fns/locale";
 
 export const TOTAL_SLOTS = 125;
-const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
+const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 17) / 100);
 const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
 const MAX_NORWEGIAN_COUNT =  Math.floor((TOTAL_SLOTS * 30) / 100);
 const MAX_COUNTRY_COUNT = 10000;// Math.floor((TOTAL_SLOTS * 15) / 100);
@@ -117,7 +117,7 @@ export class Manager {
     }
 
     if (randomAthlete.gender == Gender.Male && this.luckyMales.length >= MAX_MALE_COUNT) {
-      // Min 15% girls
+      // Min 17% girls
       return false;
     }
 
