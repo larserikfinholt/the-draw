@@ -32,7 +32,7 @@ The draw follows these specific rules implemented in `src/components/manager.ts`
 - **Maximum male participants**: 85% (106 slots maximum)
 
 **Country-based Rules:**
-- **Norwegian participants**: Maximum 25% (31 slots)
+- **Norwegian participants**: Maximum 30% (37 slots)
 - **Other countries**: Maximum 15% per country (18 slots each)
 
 **Special Rules for Large Countries:**
