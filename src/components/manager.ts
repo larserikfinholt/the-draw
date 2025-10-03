@@ -4,8 +4,8 @@ import { Gender, type IAthlete } from "./types";
 import { ar } from "date-fns/locale";
 
 export const TOTAL_SLOTS = 125;
-const MIN_FEMALE_PERCENTAGE = 15; // 15% minimum
-const MAX_FEMALE_PERCENTAGE = 15.5; // 15.5% maximum
+const MIN_FEMALE_PERCENTAGE = 20; // 20% minimum
+const MAX_FEMALE_PERCENTAGE = 20.5; // 20.5% maximum
 const FEMALE_COUNT_MIN = Math.ceil((TOTAL_SLOTS * MIN_FEMALE_PERCENTAGE) / 100);
 const FEMALE_COUNT_MAX = Math.floor((TOTAL_SLOTS * MAX_FEMALE_PERCENTAGE) / 100);
 const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT_MIN;
@@ -164,7 +164,7 @@ export class Manager {
     }
 
     if (randomAthlete.gender == Gender.Male && this.luckyMales.length >= MAX_MALE_COUNT) {
-      // Min 17% girls
+      // Min 20% girls
       return false;
     }
 
