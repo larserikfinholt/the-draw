@@ -131,9 +131,9 @@ export class Manager {
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
     // Check Norwegian quota first - this applies to all Norwegian athletes regardless of other rules
-    if (randomAthlete.country == "Norway") {
-      // Max 25% from Norway
-      if (this.lucky.filter((x) => x.country == "Norway").length >= MAX_NORWEGIAN_COUNT) {
+    if (randomAthlete.country == "Norwegian") {
+      // Max 25% from Norwegian
+      if (this.lucky.filter((x) => x.country == "Norwegian").length >= MAX_NORWEGIAN_COUNT) {
         return false;
       }
     } else if (this.lucky.filter((x) => x.country == randomAthlete.country).length >= MAX_COUNTRY_COUNT) {
