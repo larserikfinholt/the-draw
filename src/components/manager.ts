@@ -4,15 +4,18 @@ import { Gender, type IAthlete } from "./types";
 import { ar } from "date-fns/locale";
 
 export const TOTAL_SLOTS = 125;
-const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
-const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
+const MIN_FEMALE_PERCENTAGE = 15; // 15% minimum
+const MAX_FEMALE_PERCENTAGE = 15.5; // 15.5% maximum
+const FEMALE_COUNT_MIN = Math.ceil((TOTAL_SLOTS * MIN_FEMALE_PERCENTAGE) / 100);
+const FEMALE_COUNT_MAX = Math.floor((TOTAL_SLOTS * MAX_FEMALE_PERCENTAGE) / 100);
+const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT_MIN;
 const MAX_NORWEGIAN_COUNT =  Math.floor((TOTAL_SLOTS * 25) / 100);
 const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 15) / 100); // 18 slots max per country (15% of 125)
 const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 100; // Lower threshold - countries with >100 participants get special female rules
 const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = 2; // Minimum 2 females from large countries
 
-function groupBy(arr, criteria) {
-  const newObj = arr.reduce(function (acc, currentValue) {
+function groupBy(arr: any[], criteria: string) {
+  const newObj = arr.reduce(function (acc: any, currentValue: any) {
     if (!acc[currentValue[criteria]]) {
       acc[currentValue[criteria]] = [];
     }
@@ -27,6 +30,7 @@ export class Manager {
   public lucky: Array<IAthlete> = [];
   public countriesWithMoreThanThresholdParticipants: Array<string> = [];
   public forceFemaleFromThisCOuntry: string | null = null;
+  public drawnAthleteIds: Set<string> = new Set();
 
   public slots: number = TOTAL_SLOTS;
 
@@ -122,6 +126,8 @@ export class Manager {
     if (this.verifiesAllRules(randomAthlete)) {
       // Add lucky
       this.lucky.push(randomAthlete);
+      // Track that this athlete has been drawn
+      this.drawnAthleteIds.add(randomAthlete.athleteId);
       const indexToRemove = this.athletes.findIndex((x) => x.id == randomAthlete.id);
       // remove from list
       this.athletes.splice(indexToRemove, 1);
@@ -130,6 +136,16 @@ export class Manager {
     return false;
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
+    // Check if this athlete has already been drawn (prevent duplicate athletes)
+    if (this.drawnAthleteIds.has(randomAthlete.athleteId)) {
+      return false;
+    }
+
+    // Add female maximum check - prevent going above intended percentage
+    if (randomAthlete.gender == Gender.Female && this.luckyFemales.length >= FEMALE_COUNT_MAX) {
+      return false;
+    }
+
     // Check Norwegian quota first - this applies to all Norwegian athletes regardless of other rules
     if (randomAthlete.country == "Norwegian") {
       // Max 25% from Norwegian
@@ -157,7 +173,8 @@ export class Manager {
       randomAthlete.gender == Gender.Male &&
       this.countriesWithMoreThanThresholdParticipants.includes(randomAthlete.country) &&
       this.luckyFemales.filter((x) => x.country == randomAthlete.country).length < MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
-      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD
+      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
+      this.luckyFemales.length < FEMALE_COUNT_MAX // Only boost females if we haven't hit the maximum
     ) {
       console.log(
         "To few females from country, forcing a female from this country",
@@ -181,6 +198,6 @@ export class Manager {
   }
 
   public luckyAsCsv() {
-    return this.lucky.map((row) => `${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
+    return this.lucky.map((row) => `${row.athleteId}, ${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
   }
 }
