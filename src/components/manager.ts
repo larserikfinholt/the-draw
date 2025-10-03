@@ -4,8 +4,11 @@ import { Gender, type IAthlete } from "./types";
 import { ar } from "date-fns/locale";
 
 export const TOTAL_SLOTS = 125;
-const FEMALE_COUNT = Math.ceil((TOTAL_SLOTS * 15) / 100);
-const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT;
+const MIN_FEMALE_PERCENTAGE = 15; // 15% minimum
+const MAX_FEMALE_PERCENTAGE = 15.5; // 15.5% maximum
+const FEMALE_COUNT_MIN = Math.ceil((TOTAL_SLOTS * MIN_FEMALE_PERCENTAGE) / 100);
+const FEMALE_COUNT_MAX = Math.floor((TOTAL_SLOTS * MAX_FEMALE_PERCENTAGE) / 100);
+const MAX_MALE_COUNT = TOTAL_SLOTS - FEMALE_COUNT_MIN;
 const MAX_NORWEGIAN_COUNT =  Math.floor((TOTAL_SLOTS * 25) / 100);
 const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 15) / 100); // 18 slots max per country (15% of 125)
 const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 100; // Lower threshold - countries with >100 participants get special female rules
@@ -138,6 +141,11 @@ export class Manager {
       return false;
     }
 
+    // Add female maximum check - prevent going above intended percentage
+    if (randomAthlete.gender == Gender.Female && this.luckyFemales.length >= FEMALE_COUNT_MAX) {
+      return false;
+    }
+
     // Check Norwegian quota first - this applies to all Norwegian athletes regardless of other rules
     if (randomAthlete.country == "Norwegian") {
       // Max 25% from Norwegian
@@ -165,7 +173,8 @@ export class Manager {
       randomAthlete.gender == Gender.Male &&
       this.countriesWithMoreThanThresholdParticipants.includes(randomAthlete.country) &&
       this.luckyFemales.filter((x) => x.country == randomAthlete.country).length < MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
-      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD
+      this.lucky.filter((x) => x.country == randomAthlete.country).length >= MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD &&
+      this.luckyFemales.length < FEMALE_COUNT_MAX // Only boost females if we haven't hit the maximum
     ) {
       console.log(
         "To few females from country, forcing a female from this country",
