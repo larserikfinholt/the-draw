@@ -1,5 +1,6 @@
-export class IAthlete {
+export interface IAthlete {
  id: number;
+ athleteId: string;
  country:string;
  gender: Gender;
 }

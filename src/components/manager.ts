@@ -11,8 +11,8 @@ const MAX_COUNTRY_COUNT = Math.floor((TOTAL_SLOTS * 15) / 100); // 18 slots max 
 const THRESHOLD_TO_APPLY_MIN_COUNT_GIRLS_ = 100; // Lower threshold - countries with >100 participants get special female rules
 const MIN_COUNT_GIRLS_WHEN_COUNTRY_COUNT_ABOVE_THRESHOLD = 2; // Minimum 2 females from large countries
 
-function groupBy(arr, criteria) {
-  const newObj = arr.reduce(function (acc, currentValue) {
+function groupBy(arr: any[], criteria: string) {
+  const newObj = arr.reduce(function (acc: any, currentValue: any) {
     if (!acc[currentValue[criteria]]) {
       acc[currentValue[criteria]] = [];
     }
@@ -27,6 +27,7 @@ export class Manager {
   public lucky: Array<IAthlete> = [];
   public countriesWithMoreThanThresholdParticipants: Array<string> = [];
   public forceFemaleFromThisCOuntry: string | null = null;
+  public drawnAthleteIds: Set<string> = new Set();
 
   public slots: number = TOTAL_SLOTS;
 
@@ -122,6 +123,8 @@ export class Manager {
     if (this.verifiesAllRules(randomAthlete)) {
       // Add lucky
       this.lucky.push(randomAthlete);
+      // Track that this athlete has been drawn
+      this.drawnAthleteIds.add(randomAthlete.athleteId);
       const indexToRemove = this.athletes.findIndex((x) => x.id == randomAthlete.id);
       // remove from list
       this.athletes.splice(indexToRemove, 1);
@@ -130,6 +133,11 @@ export class Manager {
     return false;
   }
   public verifiesAllRules(randomAthlete: IAthlete) {
+    // Check if this athlete has already been drawn (prevent duplicate athletes)
+    if (this.drawnAthleteIds.has(randomAthlete.athleteId)) {
+      return false;
+    }
+
     // Check Norwegian quota first - this applies to all Norwegian athletes regardless of other rules
     if (randomAthlete.country == "Norwegian") {
       // Max 25% from Norwegian
@@ -181,6 +189,6 @@ export class Manager {
   }
 
   public luckyAsCsv() {
-    return this.lucky.map((row) => `${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
+    return this.lucky.map((row) => `${row.athleteId}, ${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
   }
 }
