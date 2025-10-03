@@ -33,7 +33,9 @@ const drawGirls = () => {
 };
 const exportData = () => {
   const csv = manager.value.luckyAsCsv();
-  downloadBlob(csv, "export.csv", "text/csv;charset=utf-8;");
+  const timestamp = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+  const filename = `export_${timestamp}.csv`;
+  downloadBlob(csv, filename, "text/csv;charset=utf-8;");
 };
 
 const drawBoys = () => {
