@@ -85,6 +85,7 @@ export class Manager {
 
   public start() {
     this.athletes = loadAthletes();
+    console.log("kkkkkkkkkk", this.athletes[4]);
     console.log(this.athletes);
     const byCountry = groupBy(this.athletes, "country");
 
@@ -123,14 +124,18 @@ export class Manager {
     // Pick random athlete
     const randomAthlete = array[Math.floor(Math.random() * array.length)];
 
+    console.log("Attempting to add athlete ID:", randomAthlete.id, randomAthlete.athleteId, randomAthlete.country, randomAthlete.gender);
+
     if (this.verifiesAllRules(randomAthlete)) {
       // Add lucky
       this.lucky.push(randomAthlete);
+      console.log("LUCKY:", this.lucky.length, "ID:", randomAthlete.id, randomAthlete.athleteId, randomAthlete.country, randomAthlete.gender);
       // Track that this athlete has been drawn
-      this.drawnAthleteIds.add(randomAthlete.athleteId);
-      const indexToRemove = this.athletes.findIndex((x) => x.id == randomAthlete.id);
-      // remove from list
-      this.athletes.splice(indexToRemove, 1);
+      // this.drawnAthleteIds.add(randomAthlete.athleteId);
+      // const indexToRemove = this.athletes.findIndex((x) => x.id == randomAthlete.id);
+      // // remove from list
+      // console.log("REMOVING", randomAthlete.id, randomAthlete.athleteId, randomAthlete.country, randomAthlete.gender);
+      // this.athletes.splice(indexToRemove, 1);
       return true;
     }
     return false;
@@ -197,7 +202,9 @@ export class Manager {
     return true;
   }
 
-  public luckyAsCsv() {
-    return this.lucky.map((row) => `${row.athleteId}, ${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
+ 
+   public luckyAsCsv() {
+    console.log("exporting1",this.lucky);
+    return this.lucky.map((row) => `${row.id}, ${row.country}, ${row.gender}`).join("\r\n"); // rows starting on new lines
   }
 }
